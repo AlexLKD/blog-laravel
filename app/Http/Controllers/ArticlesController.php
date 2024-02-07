@@ -12,10 +12,16 @@ class ArticlesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index():View
+    public function index(Request $request)
     {
-        return view('articles.index');
+        if ($request->is('Articles')) {
+            return view('articles.index');
+        }
+    
+        $articles = Articles::all();
+        return view('dashboard', compact('articles'));
     }
+    
 
     /**
      * Show the form for creating a new resource.
@@ -35,7 +41,13 @@ class ArticlesController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'status' => 'required|in:published,draft',
+            'image' => 'required|image',
         ]);
+            // Gérer le téléchargement de l'image si un fichier est téléchargé
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public'); // Enregistrer l'image dans le dossier "storage/app/public/images"
+            $validated['image'] = $imagePath;
+    }
     
         // Créer un nouvel article avec les données validées et lier à l'utilisateur actuel
         $request->user()->articles()->create($validated);
@@ -57,7 +69,7 @@ class ArticlesController extends Controller
      */
     public function edit(Articles $articles)
     {
-        //
+        return view('edit', compact('articles'));
     }
 
     /**

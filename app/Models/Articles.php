@@ -15,4 +15,9 @@ class Articles extends Model
         'status',
         'image',
     ];
+
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
 }
