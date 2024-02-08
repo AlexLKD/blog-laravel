@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Articles;
 use Illuminate\Http\Request;
 
@@ -67,17 +68,40 @@ class ArticlesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Articles $articles)
+    public function edit(Articles $article)
     {
-        return view('edit', compact('articles'));
+        return view('articles.edit', compact('article'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Articles $articles)
+    public function update(Request $request, Articles $article)
     {
-        //
+        // Validation des données
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'content' => 'required|string',
+        'status' => 'required|in:published,draft',
+        'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Ajoutez les règles de validation appropriées pour l'image
+    ]);
+
+    // Vérifiez si une nouvelle image a été téléchargée
+    if ($request->hasFile('image')) {
+        // Supprimez l'ancienne image du stockage si elle existe
+        if ($article->image) {
+            Storage::delete($article->image);
+        }
+
+        // Enregistrez la nouvelle image téléchargée
+        $validated['image'] = $request->file('image')->store('images', 'public');
+    }
+
+    // Mettre à jour les valeurs de l'article
+    $article->update($validated);
+
+    // Redirection vers la page de tableau de bord après la mise à jour
+    return redirect()->route('dashboard')->with('success', 'Article updated successfully');
     }
 
     /**
