@@ -25,7 +25,14 @@
                                 Modifié le : {{ $article->updated_at->format('j M Y, g:i a') }}
                             @endif
                         </small>
-                        <a href="{{ route('articles.edit', $article) }}" class="block bg-blue-500 text-black px-4 py-2 rounded mt-2">Edit</a>
+                        <div class="flex mt-2">
+                            <a href="{{ route('articles.edit', $article) }}" class="block bg-blue-500 text-black px-4 py-2 rounded mr-2">Edit</a>
+                            <form action="{{ route('articles.destroy', $article) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="block bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
