@@ -98,11 +98,11 @@ class ArticlesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Articles $articles): RedirectResponse
+    public function destroy(Articles $article): RedirectResponse
     {
-       $this->authorize('delete', $articles);
+       $this->authorize('delete', $article);
 
-       $articles->delete();
+       $article->delete();
 
        return redirect()->route('dashboard')->with('success', 'Article deleted!');
     }

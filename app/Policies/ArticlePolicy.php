@@ -45,7 +45,7 @@ class ArticlePolicy
      */
     public function delete(User $user, Articles $articles): bool
     {
-        return $this->update($user, $articles);
+        return $user->id === $articles->user_id;
     }
 
     /**
